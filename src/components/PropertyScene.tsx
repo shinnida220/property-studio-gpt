@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useRef } from "react";
-import { Canvas, ThreeEvent, useThree } from "@react-three/fiber";
+import { useEffect } from "react";
+import { Canvas, useThree } from "@react-three/fiber";
 import { Environment, Html, OrbitControls, ContactShadows } from "@react-three/drei";
 import * as THREE from "three";
 import { useEditorStore, type EditableTarget, type RoomId, type FurnitureItem } from "@/stores/editor-store";
@@ -192,17 +192,13 @@ function FurnitureModel({ item, selected, onSelect }: { item: FurnitureItem; sel
   );
 }
 
-function Interior({ room, colors, finishes, showFurniture, onSelect, walkthrough, furniture, selectedFurnitureId, selectFurniture, updateFurniture }: {
+function Interior({ room, colors, finishes, showFurniture, onSelect, walkthrough }: {
   room: RoomId;
   colors: Record<EditableTarget, string>;
   finishes: Record<"walls" | "floor" | "ceiling", { color: string; kind: string; roughness: number; metalness: number }>;
   showFurniture: boolean;
   onSelect: (target: EditableTarget) => void;
   walkthrough: boolean;
-  furniture: FurnitureItem[];
-  selectedFurnitureId: string | null;
-  selectFurniture: (id: string | null) => void;
-  updateFurniture: (id: string, patch: Partial<Pick<FurnitureItem, "position" | "rotation" | "scale" | "color">>) => void;
 }) {
   if (room === "exterior") return <HouseExterior wallColor={colors.walls} />;
 
@@ -278,12 +274,10 @@ function SceneContent() {
   const colors = useEditorStore((s) => s.colors);
   const showFurniture = useEditorStore((s) => s.showFurniture);
   const setTarget = useEditorStore((s) => s.setTarget);
-  const target = useEditorStore((s) => s.selectedTarget);
   const finishes = useEditorStore((s) => s.finishes);
   const furniture = useEditorStore((s) => s.furniture);
   const selectedFurnitureId = useEditorStore((s) => s.selectedFurnitureId);
   const selectFurniture = useEditorStore((s) => s.selectFurniture);
-  const updateFurniture = useEditorStore((s) => s.updateFurniture);
   const cameraMode = useEditorStore((s) => s.cameraMode);
   const { camera } = useThree();
   const walkthrough = cameraMode === "walk";
@@ -305,7 +299,7 @@ function SceneContent() {
       <directionalLight position={[8, 12, 7]} intensity={2.2} castShadow shadow-mapSize-width={2048} shadow-mapSize-height={2048} />
       <Environment preset="city" />
       <group position={[0, 0, 0]}>
-        <Interior room={room} colors={colors} finishes={finishes} showFurniture={showFurniture} onSelect={setTarget} walkthrough={walkthrough} furniture={furniture.filter((item) => item.room === room)} selectedFurnitureId={selectedFurnitureId} selectFurniture={selectFurniture} updateFurniture={updateFurniture} />
+        <Interior room={room} colors={colors} finishes={finishes} showFurniture={showFurniture} onSelect={setTarget} walkthrough={walkthrough} />
       </group>
       {showFurniture && furniture.filter((item) => item.room === room).map((item) => (
         <FurnitureModel key={item.id} item={item} selected={selectedFurnitureId === item.id} onSelect={() => selectFurniture(item.id)} />
