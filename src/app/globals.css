@@ -193,3 +193,14 @@ button:disabled { cursor: not-allowed; opacity: .45; }
 .transform-panel > label > svg { display:none; }
 .transform-panel .custom-colour { margin-top:0; }
 .target-list { grid-template-columns:repeat(2,minmax(0,1fr)); }
+
+
+/* Third-person walkthrough: keep the canvas gesture-driven on touch devices. */
+.viewport:has(.walk-touch-controls) { overscroll-behavior:contain; }
+.viewport:has(.walk-touch-controls) canvas { touch-action:none; }
+.walk-touch-controls { z-index:6; }
+.walk-touch-controls button { -webkit-tap-highlight-color:transparent; }
+.walk-instructions { bottom:52px; }
+@media (max-width:850px) {
+  .walk-instructions { bottom:50px; left:50%; max-width:calc(100% - 150px); }
+}
