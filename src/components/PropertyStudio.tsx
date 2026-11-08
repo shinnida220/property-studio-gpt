@@ -3,11 +3,12 @@
 import dynamic from "next/dynamic";
 import { useMemo, useState } from "react";
 import {
-  ArrowLeft, BedDouble, Building2, Check, ChevronDown, ChevronRight,
+  ArrowLeft, BedDouble, Building2, Check, ChevronDown, ChevronRight, Footprints,
   CircleHelp, DoorOpen, Eye, Home, Layers3, Maximize2, Menu, MousePointer2,
   Palette, RotateCcw, Sofa, Sparkles, Sun, WandSparkles, X
 } from "lucide-react";
 import { useEditorStore, type EditableTarget, type RoomId } from "@/stores/editor-store";
+import { WalkTouchControls } from "@/components/Walkthrough";
 
 const PropertyScene = dynamic(() => import("@/components/PropertyScene"), {
   ssr: false,
@@ -45,6 +46,8 @@ export default function PropertyStudio() {
   const reset = useEditorStore((s) => s.reset);
   const [mode, setMode] = useState<"showcase" | "design">("design");
   const [mobilePanel, setMobilePanel] = useState(false);
+  const cameraMode = useEditorStore((s) => s.cameraMode);
+  const setCameraMode = useEditorStore((s) => s.setCameraMode);
   const [notice, setNotice] = useState("Changes are previewed locally in this session.");
   const currentRoom = rooms.find((room) => room.id === activeRoom)!;
   const currentTarget = targets.find((target) => target.id === selectedTarget)!;
@@ -87,7 +90,7 @@ export default function PropertyStudio() {
               {rooms.map((room) => {
                 const Icon = room.icon;
                 return (
-                  <button key={room.id} className={`room-item ${activeRoom === room.id ? "active" : ""}`} onClick={() => setRoom(room.id)}>
+                  <button key={room.id} className={`room-item ${activeRoom === room.id ? "active" : ""}`} onClick={() => { if (room.id === "exterior" && cameraMode === "walk") setCameraMode("orbit"); setRoom(room.id); }}>
                     <Icon size={17} /><span>{room.label}</span>{activeRoom === room.id && <span className="room-active-dot" />}
                   </button>
                 );
@@ -116,6 +119,9 @@ export default function PropertyStudio() {
               <button className={`toolbar-button ${mode === "showcase" ? "selected" : ""}`} onClick={() => setMode("showcase")}><Eye size={15} /> Showcase</button>
               <button className={`toolbar-button ${mode === "design" ? "selected" : ""}`} onClick={() => setMode("design")}><Palette size={15} /> Design</button>
               <span className="toolbar-divider" />
+              <button className={`toolbar-button ${cameraMode === "walk" ? "selected" : ""}`} onClick={() => { if (activeRoom === "exterior") setRoom("living"); setCameraMode("walk"); setNotice("Walkthrough enabled. Use WASD or the on-screen controls to move; drag to look around."); }}><Footprints size={15} /> Walkthrough</button>
+              <button className={`toolbar-button ${cameraMode === "orbit" ? "selected" : ""}`} onClick={() => { setCameraMode("orbit"); setNotice("Orbit view restored."); }}><Eye size={15} /> Orbit</button>
+              <span className="toolbar-divider" />
               <button className="icon-button" title="Reset design" onClick={handleReset}><RotateCcw size={16} /></button>
               <button className="icon-button" title="Fullscreen" onClick={() => document.querySelector(".viewport")?.requestFullscreen?.()}><Maximize2 size={16} /></button>
             </div>
@@ -124,11 +130,12 @@ export default function PropertyStudio() {
             <PropertyScene />
             <div className="viewport-top-overlay">
               <div className="location-chip"><span className="live-dot" /> {currentRoom.label}</div>
-              <button className="view-chip" onClick={() => setNotice("Orbit around the property by dragging. Scroll or pinch to zoom.")}><MousePointer2 size={14} /> Orbit view</button>
+              {cameraMode === "walk" ? <button className="view-chip walk-active" onClick={() => setCameraMode("orbit")}><Footprints size={14} /> Exit walkthrough</button> : <button className="view-chip" onClick={() => setNotice("Orbit around the property by dragging. Scroll or pinch to zoom.")}><MousePointer2 size={14} /> Orbit view</button>}
             </div>
+            {cameraMode === "walk" && <><div className="walk-instructions">Walk through the open doorway to continue to the next room</div><WalkTouchControls /></>}
             <div className="viewport-bottom-overlay">
-              <div className="camera-hint"><MousePointer2 size={14} /><span>Drag to orbit</span><i /> <span>Scroll to zoom</span></div>
-              <div className="scene-counter">01 <span>/</span> 05</div>
+              <div className="camera-hint">{cameraMode === "walk" ? <><Footprints size={14} /><span>WASD to move</span><i /><span>Drag to look</span></> : <><MousePointer2 size={14} /><span>Drag to orbit</span><i /><span>Scroll to zoom</span></>}</div>
+              <div className="scene-counter">{String(rooms.findIndex((room) => room.id === activeRoom) + 1).padStart(2, "0")} <span>/</span> 05</div>
             </div>
             {mode === "showcase" && <div className="showcase-banner"><Eye size={15} /> Showcase mode · Editing is disabled</div>}
           </div>
