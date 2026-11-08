@@ -162,7 +162,7 @@ export default function PropertyStudio() {
               <button className={`toolbar-button ${mode === "showcase" ? "selected" : ""}`} onClick={() => setMode("showcase")}><Eye size={15} /> Showcase</button>
               <button className={`toolbar-button ${mode === "design" ? "selected" : ""}`} onClick={() => setMode("design")}><Palette size={15} /> Design</button>
               <span className="toolbar-divider" />
-              <button className={`toolbar-button ${cameraMode === "walk" ? "selected" : ""}`} onClick={() => { if (activeRoom === "exterior") setRoom("living"); setCameraMode("walk"); setNotice("Walkthrough enabled. Use WASD or the on-screen controls to move; drag to look around."); }}><Footprints size={15} /> Walkthrough</button>
+              <button className={`toolbar-button ${cameraMode === "walk" ? "selected" : ""}`} onClick={() => { if (activeRoom === "exterior") setRoom("living"); setCameraMode("walk"); setNotice("Third-person walkthrough enabled. WASD or the movement pad to walk; drag to orbit and scroll or pinch to zoom."); }}><Footprints size={15} /> Walkthrough</button>
               <button className={`toolbar-button ${cameraMode === "orbit" ? "selected" : ""}`} onClick={() => { setCameraMode("orbit"); setNotice("Orbit view restored."); }}><Eye size={15} /> Orbit</button>
               <span className="toolbar-divider" />
               <button className="icon-button" title="Reset design" onClick={handleReset}><RotateCcw size={16} /></button>
@@ -175,9 +175,9 @@ export default function PropertyStudio() {
               <div className="location-chip"><span className="live-dot" /> {currentRoom.label}</div>
               {cameraMode === "walk" ? <button className="view-chip walk-active" onClick={() => setCameraMode("orbit")}><Footprints size={14} /> Exit walkthrough</button> : <button className="view-chip" onClick={() => setNotice("Orbit around the property by dragging. Scroll or pinch to zoom.")}><MousePointer2 size={14} /> Orbit view</button>}
             </div>
-            {cameraMode === "walk" && <><div className="walk-instructions">Walk through the open doorway to continue to the next room</div><WalkTouchControls /></>}
+            {cameraMode === "walk" && <><div className="walk-instructions">Drag to look around · Scroll or pinch to zoom · Use the movement pad to walk</div><WalkTouchControls /></>}
             <div className="viewport-bottom-overlay">
-              <div className="camera-hint">{cameraMode === "walk" ? <><Footprints size={14} /><span>WASD to move</span><i /><span>Drag to look</span></> : <><MousePointer2 size={14} /><span>Drag to orbit</span><i /><span>Scroll to zoom</span></>}</div>
+              <div className="camera-hint">{cameraMode === "walk" ? <><Footprints size={14} /><span>WASD to move</span><i /><span>Drag to look</span><i /><span>Scroll / pinch to zoom</span></> : <><MousePointer2 size={14} /><span>Drag to orbit</span><i /><span>Scroll to zoom</span></>}</div>
               <div className="scene-counter">{String(rooms.findIndex((room) => room.id === activeRoom) + 1).padStart(2, "0")} <span>/</span> 05</div>
             </div>
             {mode === "showcase" && <div className="showcase-banner"><Eye size={15} /> Showcase mode · Editing is disabled</div>}
