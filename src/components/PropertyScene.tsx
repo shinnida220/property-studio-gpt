@@ -37,10 +37,6 @@ function RoomShell({
   ceilingFinish: { roughness: number; metalness: number };
   onWallClick: () => void;
   walkthrough: boolean;
-  furniture: FurnitureItem[];
-  selectedFurnitureId: string | null;
-  selectFurniture: (id: string | null) => void;
-  updateFurniture: (id: string, patch: Partial<Pick<FurnitureItem, "position" | "rotation" | "scale" | "color">>) => void;
 }) {
   const doorwayWidth = 1.25;
   const segmentWidth = (width - doorwayWidth) / 2;
@@ -203,6 +199,10 @@ function Interior({ room, colors, finishes, showFurniture, onSelect, walkthrough
   showFurniture: boolean;
   onSelect: (target: EditableTarget) => void;
   walkthrough: boolean;
+  furniture: FurnitureItem[];
+  selectedFurnitureId: string | null;
+  selectFurniture: (id: string | null) => void;
+  updateFurniture: (id: string, patch: Partial<Pick<FurnitureItem, "position" | "rotation" | "scale" | "color">>) => void;
 }) {
   if (room === "exterior") return <HouseExterior wallColor={colors.walls} />;
 
