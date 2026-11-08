@@ -143,7 +143,7 @@ export default function PropertyStudio() {
             <div><strong>Explore this property</strong><span>Choose a space to preview</span></div>
             <div className="room-chips">
               {rooms.map((room) => (
-                <button key={room.id} className={activeRoom === room.id ? "active" : ""} onClick={() => setRoom(room.id)}>
+                <button key={room.id} className={activeRoom === room.id ? "active" : ""} onClick={() => { if (room.id === "exterior" && cameraMode === "walk") setCameraMode("orbit"); setRoom(room.id); }}>
                   {room.label}
                 </button>
               ))}
