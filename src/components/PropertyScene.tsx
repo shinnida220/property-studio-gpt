@@ -188,7 +188,7 @@ function FurnitureModel({ item, selected, onSelect }: { item: FurnitureItem; sel
         <mesh position={[0, 1.72, 0]} castShadow><coneGeometry args={[0.28, 0.42, 20]} /><meshStandardMaterial color={color} emissive={color} emissiveIntensity={0.12} /></mesh>
         <mesh position={[0, 0.06, 0]}><cylinderGeometry args={[0.28, 0.28, 0.12, 20]} /><Material color="#59483b" /></mesh>
       </>}
-      {selected && <mesh position={[0, 0.015, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+      {selected && <mesh position={[0, 0.06, 0]} rotation={[-Math.PI / 2, 0, 0]}>
         <ringGeometry args={[0.72, 0.78, 40]} />
         <meshBasicMaterial color="#4f9664" side={THREE.DoubleSide} />
       </mesh>}
