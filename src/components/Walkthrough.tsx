@@ -16,7 +16,8 @@ const ROOM_SIZE: Record<Exclude<RoomId, "exterior">, { width: number; depth: num
 
 function RoomCollision({ room, showFurniture }: { room: Exclude<RoomId, "exterior">; showFurniture: boolean }) {
   const { width, depth } = ROOM_SIZE[room];
-  const placedFurniture = useEditorStore((state) => state.furniture.filter((item) => item.room === room));
+  const allFurniture = useEditorStore((state) => state.furniture);
+  const placedFurniture = allFurniture.filter((item) => item.room === room);
   const wallHeight = 3;
   const wallThickness = 0.12;
   const doorwayWidth = 1.25;
