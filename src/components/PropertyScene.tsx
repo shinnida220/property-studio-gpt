@@ -5,6 +5,7 @@ import { Canvas, ThreeEvent } from "@react-three/fiber";
 import { Environment, Html, OrbitControls, ContactShadows } from "@react-three/drei";
 import * as THREE from "three";
 import { useEditorStore, type EditableTarget, type RoomId } from "@/stores/editor-store";
+import { WalkthroughPhysics } from "@/components/Walkthrough";
 
 function Material({ color, roughness = 0.82 }: { color: string; roughness?: number }) {
   return <meshStandardMaterial color={color} roughness={roughness} />;
@@ -26,6 +27,7 @@ function RoomShell({
   wallColor: string;
   floorColor: string;
   onWallClick: () => void;
+  walkthrough: boolean;
 }) {
   return (
     <group position={position}>
@@ -44,7 +46,12 @@ function RoomShell({
       <mesh position={[width / 2, height / 2, 0]} castShadow receiveShadow onClick={(e) => { e.stopPropagation(); onWallClick(); }}>
         <boxGeometry args={[0.12, height, depth]} />
         <Material color={wallColor} />
-      </mesh>
+      </mesh>}
+      {walkthrough && <group>
+        <mesh position={[-(0.625 + (width - 1.25) / 4), height / 2, depth / 2]} castShadow><boxGeometry args={[(width - 1.25) / 2, height, 0.12]} /><Material color={wallColor} /></mesh>
+        <mesh position={[(0.625 + (width - 1.25) / 4), height / 2, depth / 2]} castShadow><boxGeometry args={[(width - 1.25) / 2, height, 0.12]} /><Material color={wallColor} /></mesh>
+        <mesh position={[0, height - 0.3, depth / 2]} castShadow><boxGeometry args={[1.25, 0.6, 0.12]} /><Material color={wallColor} /></mesh>
+      </group>}
       <mesh position={[0, height, 0]} receiveShadow>
         <boxGeometry args={[width, 0.12, depth]} />
         <meshStandardMaterial color="#f4f1ea" roughness={0.9} side={THREE.DoubleSide} />
