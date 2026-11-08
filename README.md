@@ -69,7 +69,7 @@ pnpm start
 8. Toggle furniture visibility to hide or show both the sample furniture and added furniture.
 9. Use **Reset** to restore initial surface values and remove added furniture.
 
-Furniture placement and transformation controls are intentionally available in Orbit mode. Switch to Walkthrough to inspect the result in first person.
+Furniture placement and transformation controls are intentionally available in Orbit mode. Switch to Walkthrough to inspect the result in a third-person character view.
 
 ## Controls
 
@@ -80,8 +80,9 @@ Furniture placement and transformation controls are intentionally available in O
 
 ### Walkthrough
 - Select **Walkthrough** in the viewport toolbar (an interior room is selected automatically if you are on the exterior).
-- Desktop: click the 3D view to capture the mouse, use WASD or arrow keys to move, and move the mouse to look around. Press Escape to release pointer lock.
-- Mobile: drag on the 3D view to look around and use the on-screen directional pad to move.
+- Desktop: use WASD or arrow keys to move, drag the 3D view to orbit the camera around the character, and scroll to zoom in or out.
+- Mobile: use the on-screen directional pad to move, drag to look around the character, and pinch to zoom.
+- Movement accelerates and decelerates smoothly. The visible character has an animated walk cycle and collides with room boundaries and the supported furniture colliders.
 - Walk through the open doorway at the front of each interior room to continue to the next room.
 - Select **Orbit** to return to the orbit camera.
 
