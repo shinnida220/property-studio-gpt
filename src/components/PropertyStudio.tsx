@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import {
   ArrowLeft, BedDouble, Building2, Check, ChevronDown, ChevronRight, Footprints,
   CircleHelp, DoorOpen, Eye, Home, Layers3, Maximize2, Menu, MousePointer2,
