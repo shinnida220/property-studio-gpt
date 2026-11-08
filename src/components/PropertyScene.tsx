@@ -44,7 +44,7 @@ function RoomShell({
     <group position={position}>
       <mesh position={[0, 0.025, 0]} receiveShadow><boxGeometry args={[width, 0.05, depth]} /><meshStandardMaterial color={floorColor} roughness={floorFinish.roughness} metalness={floorFinish.metalness} /></mesh>
       <mesh position={[0, height / 2, -depth / 2]} castShadow receiveShadow onClick={(e) => { e.stopPropagation(); onWallClick(); }}><boxGeometry args={[width, height, 0.12]} /><meshStandardMaterial color={wallColor} roughness={wallFinish.roughness} metalness={wallFinish.metalness} /></mesh>
-      <mesh position={[-width / 2, height / 2, 0]} castShadow receiveShadow onClick={(e) => { e.stopPropagation(); onWallClick(); }}><boxGeometry args={[0.12, height, depth]} /><Material color={wallColor} /></mesh>
+      <mesh position={[-width / 2, height / 2, 0]} castShadow receiveShadow onClick={(e) => { e.stopPropagation(); onWallClick(); }}><boxGeometry args={[0.12, height, depth]} /><meshStandardMaterial color={wallColor} roughness={wallFinish.roughness} metalness={wallFinish.metalness} /></mesh>
       <mesh position={[width / 2, height / 2, 0]} castShadow receiveShadow onClick={(e) => { e.stopPropagation(); onWallClick(); }}><boxGeometry args={[0.12, height, depth]} /><Material color={wallColor} /></mesh>
       {walkthrough ? <>
         <mesh position={[-(doorwayWidth / 2 + segmentWidth / 2), height / 2, depth / 2]} castShadow><boxGeometry args={[segmentWidth, height, 0.12]} /><Material color={wallColor} /></mesh>
