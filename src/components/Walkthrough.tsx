@@ -16,6 +16,7 @@ const ROOM_SIZE: Record<Exclude<RoomId, "exterior">, { width: number; depth: num
 
 function RoomCollision({ room, showFurniture }: { room: Exclude<RoomId, "exterior">; showFurniture: boolean }) {
   const { width, depth } = ROOM_SIZE[room];
+  const placedFurniture = useEditorStore((state) => state.furniture.filter((item) => item.room === room));
   const wallHeight = 3;
   const wallThickness = 0.12;
   const doorwayWidth = 1.25;
@@ -51,6 +52,15 @@ function RoomCollision({ room, showFurniture }: { room: Exclude<RoomId, "exterio
           <CuboidCollider args={[0.42, 0.9, 0.38]} position={[-2, 0.9, -1.5]} />
         </>
       )}
+      {showFurniture && placedFurniture.map((item) => {
+        const dimensions: Record<string, [number, number, number, number]> = {
+          sofa: [0.95, 0.48, 0.43, 0.48], armchair: [0.42, 0.48, 0.42, 0.48],
+          "coffee-table": [0.62, 0.25, 0.4, 0.25], "dining-table": [0.85, 0.42, 0.5, 0.42],
+          bed: [0.95, 0.48, 1.08, 0.48], plant: [0.32, 0.72, 0.32, 0.72], "floor-lamp": [0.18, 0.85, 0.18, 0.85]
+        };
+        const [halfX, halfY, halfZ, centerY] = dimensions[item.kind];
+        return <CuboidCollider key={item.id} args={[halfX * item.scale[0], halfY * item.scale[1], halfZ * item.scale[2]]} position={[item.position[0], centerY * item.scale[1], item.position[2]]} rotation={item.rotation} />;
+      })}
       {room === "bathroom" && (
         <>
           <CuboidCollider args={[0.65, 0.52, 0.65]} position={[0.9, 0.52, -1]} />
