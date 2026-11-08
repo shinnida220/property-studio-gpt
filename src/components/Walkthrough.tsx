@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type RefObject } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import { CapsuleCollider, CuboidCollider, Physics, RigidBody } from "@react-three/rapier";
 import * as THREE from "three";
@@ -63,7 +63,7 @@ function RoomCollision({ room, showFurniture }: { room: Exclude<RoomId, "exterio
 }
 
 function Avatar({ root, leftArm, rightArm, leftLeg, rightLeg }: {
-  root: React.RefObject<THREE.Group | null>;
+  root: RefObject<THREE.Group | null>;
   leftArm: React.RefObject<THREE.Group | null>;
   rightArm: React.RefObject<THREE.Group | null>;
   leftLeg: React.RefObject<THREE.Group | null>;
