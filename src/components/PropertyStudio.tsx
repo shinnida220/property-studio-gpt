@@ -240,7 +240,7 @@ export default function PropertyStudio() {
             <section className="editor-section furniture-editor">
               <div className="editor-section-title"><span>3</span><div><strong>Furniture</strong><small>Add and arrange objects in this room</small></div></div>
               <div className="furniture-catalog">
-                {furnitureCatalog.map((item) => <button key={item.kind} onClick={() => { addFurniture(item.kind); setNotice(`${item.label} added to ${currentRoom.label.toLowerCase()}.`); }} disabled={mode === "showcase" || activeRoom === "exterior"}><Plus size={12} />{item.label}</button>)}
+                {furnitureCatalog.map((item) => <button key={item.kind} onClick={() => { addFurniture(item.kind); setNotice(`${item.label} added to ${currentRoom.label.toLowerCase()}.`); }} disabled={mode === "showcase" || activeRoom === "exterior" || cameraMode === "walk"}><Plus size={12} />{item.label}</button>)}
               </div>
               <div className="placed-furniture-list">
                 <strong>Placed in this room ({roomFurniture.length})</strong>
