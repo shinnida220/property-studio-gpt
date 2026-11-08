@@ -1,23 +1,26 @@
 # Project status
 
-Phase 1 frontend starter delivered.
+## Phase 1 — Complete
+- Responsive property showcase and design studio interface
+- Procedural exterior and interior sample scenes
+- Room switching and orbit camera
+- Material colour selection, furniture visibility and local reset
 
-Implemented:
-- Next.js application shell
-- Responsive property showcase / design studio UI
-- Procedural Three.js sample scenes
-- Room switching
-- Orbit camera controls
-- Material colour selection
-- Furniture visibility toggle
-- Local reset
+## Phase 2 — Implemented
+- First-person walkthrough camera
+- WASD and arrow-key movement
+- Desktop pointer-lock mouse look
+- Mobile touch-drag look and on-screen directional controls
+- Rapier dynamic capsule player
+- Static collision volumes for room floors, walls and visible furniture
+- Front doorway openings and guided room transitions
+- Walkthrough/orbit camera switching
 
-Not yet implemented:
-- Real photogrammetry/GLB reconstruction
-- First-person walking and Rapier collisions
-- Continuous room navigation
-- Backend/API and persistence
-- Asset upload and processing pipeline
-- Add/remove/transform furniture
+## Known limitations
+- Rooms are separate demo scenes joined by a guided doorway progression, not one architecturally accurate floor plan.
+- Collision volumes are manually authored primitive shapes.
+- Exterior remains orbit-only.
+- No photogrammetry/GLB reconstruction, backend/API, authentication, uploads or persistent design saving yet.
 
-See README.md for setup and controls.
+## Next phase
+Phase 3: expanded design editor with wall, floor and ceiling finishes, broader material controls, and furniture placement/transformation.

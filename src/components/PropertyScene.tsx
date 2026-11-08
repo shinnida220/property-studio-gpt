@@ -1,10 +1,11 @@
 "use client";
 
-import { useMemo, useRef } from "react";
-import { Canvas, ThreeEvent } from "@react-three/fiber";
+import { useEffect, useMemo, useRef } from "react";
+import { Canvas, ThreeEvent, useThree } from "@react-three/fiber";
 import { Environment, Html, OrbitControls, ContactShadows } from "@react-three/drei";
 import * as THREE from "three";
 import { useEditorStore, type EditableTarget, type RoomId } from "@/stores/editor-store";
+import { WalkthroughPhysics } from "@/components/Walkthrough";
 
 function Material({ color, roughness = 0.82 }: { color: string; roughness?: number }) {
   return <meshStandardMaterial color={color} roughness={roughness} />;
@@ -17,7 +18,8 @@ function RoomShell({
   height = 3,
   wallColor,
   floorColor,
-  onWallClick
+  onWallClick,
+  walkthrough
 }: {
   position: [number, number, number];
   width: number;
@@ -26,33 +28,25 @@ function RoomShell({
   wallColor: string;
   floorColor: string;
   onWallClick: () => void;
+  walkthrough: boolean;
 }) {
+  const doorwayWidth = 1.25;
+  const segmentWidth = (width - doorwayWidth) / 2;
   return (
     <group position={position}>
-      <mesh position={[0, 0.025, 0]} receiveShadow>
-        <boxGeometry args={[width, 0.05, depth]} />
-        <Material color={floorColor} />
-      </mesh>
-      <mesh position={[0, height / 2, -depth / 2]} castShadow receiveShadow onClick={(e) => { e.stopPropagation(); onWallClick(); }}>
-        <boxGeometry args={[width, height, 0.12]} />
-        <Material color={wallColor} />
-      </mesh>
-      <mesh position={[-width / 2, height / 2, 0]} castShadow receiveShadow onClick={(e) => { e.stopPropagation(); onWallClick(); }}>
-        <boxGeometry args={[0.12, height, depth]} />
-        <Material color={wallColor} />
-      </mesh>
-      <mesh position={[width / 2, height / 2, 0]} castShadow receiveShadow onClick={(e) => { e.stopPropagation(); onWallClick(); }}>
-        <boxGeometry args={[0.12, height, depth]} />
-        <Material color={wallColor} />
-      </mesh>
-      <mesh position={[0, height, 0]} receiveShadow>
-        <boxGeometry args={[width, 0.12, depth]} />
-        <meshStandardMaterial color="#f4f1ea" roughness={0.9} side={THREE.DoubleSide} />
-      </mesh>
+      <mesh position={[0, 0.025, 0]} receiveShadow><boxGeometry args={[width, 0.05, depth]} /><Material color={floorColor} /></mesh>
+      <mesh position={[0, height / 2, -depth / 2]} castShadow receiveShadow onClick={(e) => { e.stopPropagation(); onWallClick(); }}><boxGeometry args={[width, height, 0.12]} /><Material color={wallColor} /></mesh>
+      <mesh position={[-width / 2, height / 2, 0]} castShadow receiveShadow onClick={(e) => { e.stopPropagation(); onWallClick(); }}><boxGeometry args={[0.12, height, depth]} /><Material color={wallColor} /></mesh>
+      <mesh position={[width / 2, height / 2, 0]} castShadow receiveShadow onClick={(e) => { e.stopPropagation(); onWallClick(); }}><boxGeometry args={[0.12, height, depth]} /><Material color={wallColor} /></mesh>
+      {walkthrough ? <>
+        <mesh position={[-(doorwayWidth / 2 + segmentWidth / 2), height / 2, depth / 2]} castShadow><boxGeometry args={[segmentWidth, height, 0.12]} /><Material color={wallColor} /></mesh>
+        <mesh position={[(doorwayWidth / 2 + segmentWidth / 2), height / 2, depth / 2]} castShadow><boxGeometry args={[segmentWidth, height, 0.12]} /><Material color={wallColor} /></mesh>
+        <mesh position={[0, height - 0.3, depth / 2]} castShadow><boxGeometry args={[doorwayWidth, 0.6, 0.12]} /><Material color={wallColor} /></mesh>
+      </> : <mesh position={[0, height / 2, depth / 2]} castShadow receiveShadow onClick={(e) => { e.stopPropagation(); onWallClick(); }}><boxGeometry args={[width, height, 0.12]} /><Material color={wallColor} /></mesh>}
+      <mesh position={[0, height, 0]} receiveShadow><boxGeometry args={[width, 0.12, depth]} /><meshStandardMaterial color="#f4f1ea" roughness={0.9} side={THREE.DoubleSide} /></mesh>
     </group>
   );
 }
-
 function Sofa({ color, onSelect }: { color: string; onSelect: () => void }) {
   return (
     <group position={[0, 0, 0]} onClick={(e) => { e.stopPropagation(); onSelect(); }}>
@@ -148,11 +142,12 @@ function HouseExterior({ wallColor }: { wallColor: string }) {
   );
 }
 
-function Interior({ room, colors, showFurniture, onSelect }: {
+function Interior({ room, colors, showFurniture, onSelect, walkthrough }: {
   room: RoomId;
   colors: Record<EditableTarget, string>;
   showFurniture: boolean;
   onSelect: (target: EditableTarget) => void;
+  walkthrough: boolean;
 }) {
   if (room === "exterior") return <HouseExterior wallColor={colors.walls} />;
 
@@ -173,6 +168,7 @@ function Interior({ room, colors, showFurniture, onSelect }: {
         wallColor={colors.walls}
         floorColor={colors.floor}
         onWallClick={() => onSelect("walls")}
+        walkthrough={walkthrough}
       />
       {room === "living" && showFurniture && (
         <>
@@ -224,6 +220,16 @@ function SceneContent() {
   const showFurniture = useEditorStore((s) => s.showFurniture);
   const setTarget = useEditorStore((s) => s.setTarget);
   const target = useEditorStore((s) => s.selectedTarget);
+  const cameraMode = useEditorStore((s) => s.cameraMode);
+  const { camera } = useThree();
+  const walkthrough = cameraMode === "walk";
+
+  useEffect(() => {
+    if (cameraMode === "orbit") {
+      camera.position.set(10, 7, 12);
+      camera.lookAt(0, 1.2, 0);
+    }
+  }, [camera, cameraMode]);
 
   const roomTitle = room === "exterior" ? "Exterior" : room.charAt(0).toUpperCase() + room.slice(1);
 
@@ -235,10 +241,10 @@ function SceneContent() {
       <directionalLight position={[8, 12, 7]} intensity={2.2} castShadow shadow-mapSize-width={2048} shadow-mapSize-height={2048} />
       <Environment preset="city" />
       <group position={[0, 0, 0]}>
-        <Interior room={room} colors={colors} showFurniture={showFurniture} onSelect={setTarget} />
+        <Interior room={room} colors={colors} showFurniture={showFurniture} onSelect={setTarget} walkthrough={walkthrough} />
       </group>
       <ContactShadows position={[0, 0.02, 0]} opacity={0.3} scale={18} blur={2.5} far={8} />
-      <OrbitControls
+      {cameraMode === "orbit" ? <OrbitControls
         makeDefault
         target={room === "exterior" ? [0, 1.2, 0] : [0, 1.2, 0]}
         minDistance={2.4}
@@ -246,14 +252,14 @@ function SceneContent() {
         maxPolarAngle={Math.PI / 2.03}
         enableDamping
         dampingFactor={0.08}
-      />
-      <Html position={[0, 3.4, 0]} center distanceFactor={12} style={{ pointerEvents: "none" }}>
+      /> : <WalkthroughPhysics room={room} />}
+      {cameraMode === "orbit" && <Html position={[0, 3.4, 0]} center distanceFactor={12} style={{ pointerEvents: "none" }}>
         <div className="scene-label">{roomTitle} · Interactive preview</div>
-      </Html>
-      <mesh position={[0, -0.09, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+      </Html>}
+      {room === "exterior" && <mesh position={[0, -0.09, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
         <planeGeometry args={[100, 100]} />
         <meshStandardMaterial color="#9aa58e" roughness={1} />
-      </mesh>
+      </mesh>}
     </>
   );
 }
